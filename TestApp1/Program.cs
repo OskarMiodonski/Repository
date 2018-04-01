@@ -19,171 +19,106 @@ namespace TestApp1
 
     class Program
     {
-        public delegate void WypiszDaneZwierza(IAnimal ani);
-        public delegate void WpiszDaneZwierzaDoPliku(IAnimal ani, StreamWriter swr);
-
         static void Main(string[] args)
         {
-            Console.ForegroundColor = ConsoleColor.Green;
+           
+        Dog dog = new Dog("Joseph", "Bullterier", new DateTime(1996, 5, 29));
 
-            WypiszDaneZwierza wpda = DescribeMe;
-            wpda += MakeSound;
+        dog.Describe();
 
 
-            WpiszDaneZwierzaDoPliku wpdp = DescribeMeToFile;
-            wpdp += MakeMySoundToFile;
 
-            Doge dog = new Doge("janus");
-            Catz kitty = new Catz("frankie");
 
             
-            wpda(dog);
-            wpda(kitty);
-            wpda(new Fishy("lilmo"));
 
-            HelpPrint(wpda, dog);
-            HelpPrint(wpda, kitty);
-            HelpPrint(wpda, new Fishy("fis"));
-
-
-            string ti;
-            decimal pi;
-            double rad = 3.0;
-            double circle = 2 * Math.PI * rad;
-
-            ti = (circle / (2 * rad)).ToString();
-            pi = decimal.Parse(ti);
-            
-            Console.WriteLine(pi);
 
 
 
             Console.ReadLine();
         }
-
-        public static void HelpPrint(WypiszDaneZwierza wpd, IAnimal ani)
-        {
-            wpd(ani);
-        }
-
-        public static void DescribeMeToFile(IAnimal ani, StreamWriter swr)
-        {
-            swr.WriteLine(ani.Describe());
-        }
-
-        public static void MakeMySoundToFile(IAnimal ani, StreamWriter swr)
-        {
-            swr.WriteLine(ani.makeSound());
-        }
-
-
-
-
-
-        public static void DescribeMe(IAnimal ani)
-        {
-            Console.WriteLine("Describing {0} : {1} ", ani.GetType(), ani.Describe());
-        }
-
-
-        public static void MakeSound(IAnimal ani)
-        {
-            Console.WriteLine("Making sound of {0} : {1} ", ani.GetType(), ani.makeSound());
-        }
-
     }
-
-    interface IAnimal
+    class Animal
     {
-        string Describe();
-        string makeSound();
-    }
-
-    public static class MyUltility
-    {
-        public static bool isNumeric(this string s)
+        //CONSTRUCTORS
+        public Animal(string name, string race, DateTime birthdate)
         {
-            return float.TryParse(s, out float outpt);
+            _Name = name;
+            _Race = race;
+            _BirthDate = birthdate;
+
+            Describe = PrintName;
+            Describe += PrintRace;
+            Describe += PrintAge;
+            Describe += MakeSound;
+        }
+
+
+        //FIELDS
+        protected string _Name;
+        protected string _Race;
+        protected DateTime _BirthDate;
+
+        public DescribeMe Describe;
+
+        //METHODS
+        virtual public void MakeSound()
+        {
+            Console.WriteLine("Default sound");
         }
         
-        public static void add1(ref int val)
+        public void PrintAge()
         {
-            val += 1;
+            Console.WriteLine("Im {0} Years old", (int)DateTime.Now.Subtract(_BirthDate).TotalDays/365);
         }
-        
+
+        public void PrintName()
+        {
+            Console.WriteLine("My name is {0}", _Name);
+        }
+
+        public void PrintRace()
+        {
+            Console.WriteLine("My race is {0}", _Race);
+        }
+
+        public delegate void DescribeMe();
+
+
+        //PROPERTIES
+        public string Name
+        {
+            get { return _Name; }
+            private set { }
+        }
+
+        public string Race
+        {
+            get { return _Race; }
+            private set { }
+        }
+
+        public DateTime BirthDate
+        {
+            get { return _BirthDate; }
+            private set { }
+        }
 
     }
 
-    class testClass<VariableType> where VariableType: struct
+    class Dog : Animal
     {
-
-        public static void PrintType()
+        public Dog(string name, string race, DateTime birthdate)
+            :base( name, race, birthdate)
         {
-            Console.WriteLine("Type of variable is: " + typeof(VariableType));
+           
         }
 
 
-
-    }
-
-    class Doge : IAnimal
-    {
-        public Doge(string name)
+        public override void MakeSound()
         {
-            this.Name = name;   
-        }
-
-        private string Name;
-  
-        public  string Describe()
-        {
-            return "Imma dogge named " + Name;
-        }
-        public string makeSound()
-        {
-            return "WHOOF";
+            Console.WriteLine("Whooof!");
         }
 
     }
-
-    class Catz : IAnimal
-    {
-        public Catz(string name)
-        {
-            this.Name = name;
-        }
-
-        private string Name { get; set; }
-        public string Describe()
-        {
-            return "Imma catz named " + Name;
-        }
-        public string makeSound()
-        {
-            return "Meow";
-        }
-    }
-
-    class Fishy : IAnimal
-    {
-        public Fishy(string name)
-        {
-            this.Name = name;
-            this.Race = "Pstrag";
-
-        }   
-
-        public string Name { get; set; }
-        public string Race { get; set; }
-
-
-        public string Describe()
-        {
-            return "Imma fishy named " + Name + "of race " + Race.ToString();
-        }
-        public string makeSound()
-        {
-            return "blurp";
-        }
-    }
+   
 }
